@@ -1,0 +1,153 @@
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  #container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  #filterContainer {
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+  }
+  #filterContainer input {
+    margin-right: 10px;
+    padding: 5px;
+    width: calc(33% - 10px);
+    box-sizing: border-box;
+  }
+  #videoListContainer {
+    flex: 1;
+    overflow-y: auto;
+  }
+  .video-container {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+  }
+  .thumbnail {
+    flex: 0 0 200px;
+    margin-right: 20px;
+  }
+  .thumbnail img {
+    max-width: 100%;
+    height: auto;
+  }
+  .video-info {
+    flex: 1;
+  }
+  .video-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .video-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .video-title a:hover {
+    text-decoration: underline;
+  }
+  .video-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  .video-tags {
+    grid-column: 1 / -1;
+    margin-top: 5px;
+  }
+  .video-summary {
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+  }
+</style>
+
+<div id="container">
+  <div id="filterContainer"></div>
+  <div id="videoListContainer"></div>
+</div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbxNncXTlSklvufoFAxUw55YnQJUc_oQRUFmeb-w856hna1tdCIBchwyrTOGcDBa8EZc/exec';
+
+async function fetchData() {
+  const response = await fetch(API_URL);
+  const data = await response.json();
+  return data;
+}
+
+function createVideoList(data) {
+  const container = document.getElementById('videoListContainer');
+  container.innerHTML = '';
+
+  data.forEach(video => {
+    const videoElement = document.createElement('div');
+    videoElement.className = 'video-container';
+
+    videoElement.innerHTML = `
+      <div class="thumbnail">
+        <a href="${video.Hyperlink}" target="_blank">
+          <img src="${video.Thumbnail}" alt="${video.Title}">
+        </a>
+      </div>
+      <div class="video-info">
+        <div class="video-title">
+          <a href="${video.Hyperlink}" target="_blank">${video.Title}</a>
+        </div>
+        <div class="video-details">
+          <div>片長: ${video.Duration}</div>
+          <div>上載日期: ${video['Uploaded Date']}</div>
+          <div class="video-tags">話題標籤: ${video.Tags}</div>
+        </div>
+        <div class="video-summary">
+          內容: ${video.Summary}
+        </div>
+      </div>
+    `;
+
+    container.appendChild(videoElement);
+  });
+}
+
+function createFilterInputs(data) {
+  const filterContainer = document.getElementById('filterContainer');
+  const fields = ['Title', 'Tags', 'Summary'];
+
+  fields.forEach(field => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = `Filter by ${field}`;
+    input.addEventListener('input', () => filterVideos(data));
+    filterContainer.appendChild(input);
+  });
+}
+
+function filterVideos(data) {
+  const filters = Array.from(document.querySelectorAll('#filterContainer input'))
+    .map(input => ({ field: input.placeholder.split(' ')[2], value: input.value.toLowerCase() }));
+
+  const filteredData = data.filter(video => 
+    filters.every(filter => 
+      String(video[filter.field]).toLowerCase().includes(filter.value)
+    )
+  );
+
+  createVideoList(filteredData);
+}
+
+async function init() {
+  const data = await fetchData();
+  createFilterInputs(data);
+  createVideoList(data);
+}
+
+init();
+</script>
+
+<div class="powr-visitor-counter" id="f29dd3e9_1719864723"></div><script src="https://www.powr.io/powr.js?platform=google"></script>
