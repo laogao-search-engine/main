@@ -1,92 +1,187 @@
-<style>
-  body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-  }
-  #container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  #filterContainer {
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-bottom: 1px solid #ddd;
-  }
-  #filterContainer input {
-    margin-right: 10px;
-    padding: 5px;
-    width: calc(33% - 10px);
-    box-sizing: border-box;
-  }
-  #videoListContainer {
-    flex: 1;
-    overflow-y: auto;
-  }
-  .video-container {
-    display: flex;
-    border-bottom: 1px solid #ddd;
-    padding: 10px;
-  }
-  .thumbnail {
-    flex: 0 0 200px;
-    margin-right: 20px;
-  }
-  .thumbnail img {
-    max-width: 100%;
-    height: auto;
-  }
-  .video-info {
-    flex: 1;
-  }
-  .video-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  .video-title a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .video-title a:hover {
-    text-decoration: underline;
-  }
-  .video-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5px;
-    margin-bottom: 10px;
-  }
-  .video-tags {
-    grid-column: 1 / -1;
-    margin-top: 5px;
-  }
-  .video-summary {
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
-  }
-</style>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老高與小茉最强搜索器</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
 
-<html>
-    <head>
-    老高與小茉最强搜索器
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8708026907820400"
-            crossorigin="anonymous"></script>
-    </head>
+        #container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
 
+        #filterContainer {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+
+            #filterContainer input {
+                margin-right: 10px;
+                padding: 5px;
+                width: calc(33% - 10px);
+                box-sizing: border-box;
+            }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 26px;
+                width: 26px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+            input:checked + .slider:before {
+                transform: translateX(26px);
+            }
+
+        #videoListContainer {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .video-container {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .thumbnail {
+            flex: 0 0 200px;
+            margin-right: 20px;
+        }
+
+            .thumbnail img {
+                max-width: 100%;
+                height: auto;
+            }
+
+        .video-info {
+            flex: 1;
+        }
+
+        .video-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+            .video-title a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+                .video-title a:hover {
+                    text-decoration: underline;
+                }
+
+        .video-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .video-tags {
+            grid-column: 1 / -1;
+            margin-top: 5px;
+        }
+
+        .video-summary {
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+
+        #loadingMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            font-size: 18px;
+            text-align: center;
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8708026907820400" crossorigin="anonymous"></script>
+</head>
+<body>
     <div>
         <div class="powr-visitor-counter" id="f29dd3e9_1719864723"></div>
         <script src="https://www.powr.io/powr.js?platform=google"></script>
     </div>
 
+    <div id="loadingMessage">老高與小茉最强搜索器 - 開啟中, 請稍等...</div>
+
     <div id="container">
-        <div id="filterContainer"></div>
+        <div id="filterContainer">
+            <!-- Filter inputs will be added here by JavaScript -->
+            <div class="toggle-container">
+                <span>繁體</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="traditionalToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
         <div id="videoListContainer"></div>
     </div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbxNncXTlSklvufoFAxUw55YnQJUc_oQRUFmeb-w856hna1tdCIBchwyrTOGcDBa8EZc/exec';
+        let globalData = [];
+        let isTraditional = false;
 
         async function fetchData() {
             const response = await fetch(API_URL);
@@ -103,25 +198,25 @@
                 videoElement.className = 'video-container';
 
                 videoElement.innerHTML = `
-                <div class="thumbnail">
-                <a href="${video.Hyperlink}" target="_blank">
-                    <img src="${video.Thumbnail}" alt="${video.Title}">
-                </a>
-                </div>
-                <div class="video-info">
-                <div class="video-title">
-                    <a href="${video.Hyperlink}" target="_blank">${video.Title}</a>
-                </div>
-                <div class="video-details">
-                    <div>片長: ${video.Duration}</div>
-                    <div>上載日期: ${video['Uploaded Date']}</div>
-                    <div class="video-tags">話題標籤: ${video.Tags}</div>
-                </div>
-                <div class="video-summary">
-                    內容: ${video.Summary}
-                </div>
-                </div>
-            `;
+                            <div class="thumbnail">
+                                <a href="${video.Hyperlink}" target="_blank">
+                                    <img src="${video.Thumbnail}" alt="${video.Title}">
+                                </a>
+                            </div>
+                            <div class="video-info">
+                                <div class="video-title">
+                                    <a href="${video.Hyperlink}" target="_blank">${video.Title}</a>
+                                </div>
+                                <div class="video-details">
+                                    <div>片長: ${video.Duration}</div>
+                                    <div>上載日期: ${video['Uploaded Date']}</div>
+                                    <div class="video-tags">話題標籤: ${isTraditional ? video['Tags-Trad'] : video.Tags}</div>
+                                </div>
+                                <div class="video-summary">
+                                    ${isTraditional ? video['Summary-Trad'] : video.Summary}
+                                </div>
+                            </div>
+                        `;
 
                 container.appendChild(videoElement);
             });
@@ -129,39 +224,66 @@
 
         function createFilterInputs(data) {
             const filterContainer = document.getElementById('filterContainer');
-            const fields = ['Title', 'Tags', 'Summary'];
+            const fields = [
+                { name: 'Title', label: '搜索影片主題' },
+                { name: 'Tags', label: '搜索話題標籤' },
+                { name: 'Summary', label: '搜索內容總結' }
+            ];
 
             fields.forEach(field => {
                 const input = document.createElement('input');
                 input.type = 'text';
-                input.placeholder = `Filter by ${field}`;
+                input.placeholder = field.label;
+                input.dataset.field = field.name;
                 input.addEventListener('input', () => filterVideos(data));
-                filterContainer.appendChild(input);
+                filterContainer.insertBefore(input, filterContainer.lastElementChild);
             });
         }
 
         function filterVideos(data) {
-            const filters = Array.from(document.querySelectorAll('#filterContainer input'))
-                .map(input => ({ field: input.placeholder.split(' ')[2], value: input.value.toLowerCase() }));
+            const filters = Array.from(document.querySelectorAll('#filterContainer input[type="text"]'))
+                .map(input => ({ field: input.dataset.field, value: input.value.toLowerCase() }));
 
             const filteredData = data.filter(video =>
-                filters.every(filter =>
-                    String(video[filter.field]).toLowerCase().includes(filter.value)
-                )
+                filters.every(filter => {
+                    const fieldValue = isTraditional && (filter.field === 'Tags' || filter.field === 'Summary')
+                        ? String(video[filter.field + '-Trad']).toLowerCase()
+                        : String(video[filter.field]).toLowerCase();
+                    return fieldValue.includes(filter.value);
+                })
             );
 
             createVideoList(filteredData);
         }
 
+        function toggleTraditional() {
+            isTraditional = !isTraditional;
+            filterVideos(globalData);
+        }
+
+        function hideLoadingMessage() {
+            const loadingMessage = document.getElementById('loadingMessage');
+            loadingMessage.style.display = 'none';
+        }
+
         async function init() {
-            const data = await fetchData();
-            createFilterInputs(data);
-            createVideoList(data);
+            try {
+                globalData = await fetchData();
+                createFilterInputs(globalData);
+                createVideoList(globalData);
+
+                const traditionalToggle = document.getElementById('traditionalToggle');
+                traditionalToggle.addEventListener('change', toggleTraditional);
+
+                hideLoadingMessage();
+            } catch (error) {
+                console.error('Error initializing the app:', error);
+                const loadingMessage = document.getElementById('loadingMessage');
+                loadingMessage.textContent = '加載失敗，請稍後再試。';
+            }
         }
 
         init();
     </script>
-
-
-
+</body>
 </html>
